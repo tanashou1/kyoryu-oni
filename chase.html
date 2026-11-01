@@ -15,14 +15,14 @@
 <body>
 <main class="app">
 <header><div class="brand"><span>🦕</span>ちいさな きょうりゅうの もり</div><button class="sound" id="sound" aria-pressed="false">♪ おと：なし</button></header>
-<nav class="game-nav" style="margin-top:20px"><a href="./" style="color:#426a50;display:inline-block;padding:12px 18px;background:#fffdf6;border-radius:20px;text-decoration:none;font-weight:bold">← あそびを えらぶ</a><button class="replay" id="replay" disabled>もう いっかい！</button></nav><h1>きょうりゅう おいかけっこ</h1><p class="intro">ぽんぽんぽん！ にげる おともだちを おいかけよう！</p>
+<nav class="game-nav" style="margin-top:20px"><a href="./?v=cg3" style="color:#426a50;display:inline-block;padding:12px 18px;background:#fffdf6;border-radius:20px;text-decoration:none;font-weight:bold">← あそびを えらぶ</a><button class="replay" id="replay" disabled>もう いっかい！</button></nav><h1>きょうりゅう おいかけっこ</h1><p class="intro">がめんを タッチ！ にげる おともだちを おいかけよう！</p>
 <section class="world" aria-label="緑の恐竜が黄色い恐竜を追いかける草原"><canvas id="scene" aria-label="にこにこした恐竜のおともだち"></canvas><div class="status" id="status" role="status" aria-live="polite">いっしょに あそぼ！</div></section>
 <p class="species" id="species" aria-live="polite"></p>
 <div class="progress" aria-label="お友だちに近づくほど足あとが増えます" id="progress"></div>
 <div class="controls"><button class="go" id="go"><svg viewBox="0 0 40 44" aria-hidden="true"><g fill="currentColor"><ellipse cx="20" cy="30" rx="12" ry="11" transform="rotate(-10 20 30)"/><ellipse cx="7" cy="15" rx="5" ry="7" transform="rotate(-25 7 15)"/><ellipse cx="19" cy="8" rx="5" ry="7"/><ellipse cx="31" cy="13" rx="5" ry="7" transform="rotate(25 31 13)"/></g></svg><span id="label">あそぶ！</span></button><p class="hint" id="hint">おおきな ボタンを ぽん！<br>ゆっくりで だいじょうぶ。</p><button class="restart" id="restart" hidden>はじめから</button></div>
 <footer>2さいからの おいかけっこ · じかんせいげん なし</footer>
 </main>
-<script src="dinos.js?v=2"></script>
+<script src="wildlife-cg-v3.js"></script>
 <script>
 'use strict';
 const canvas=document.querySelector('#scene'),ctx=canvas.getContext('2d'),go=document.querySelector('#go'),label=document.querySelector('#label'),statusText=document.querySelector('#status'),hint=document.querySelector('#hint'),restart=document.querySelector('#restart'),sound=document.querySelector('#sound'),replay=document.querySelector('#replay'),speciesText=document.querySelector('#species');
@@ -37,10 +37,14 @@ const dots=Array.from({length:6},()=>{let d=document.createElement('span');d.cla
 function tone(win=false){if(!soundOn)return;try{audio=audio||new(window.AudioContext||window.webkitAudioContext)();audio.resume();(win?[523,659,784]:[392,523]).forEach((f,i)=>{let o=audio.createOscillator(),g=audio.createGain(),t=audio.currentTime+i*.12;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.075,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.24);o.connect(g);g.connect(audio.destination);o.start(t);o.stop(t+.25)})}catch{}}
 sound.onclick=()=>{soundOn=!soundOn;sound.textContent=soundOn?'♪ おと：あり':'♪ おと：なし';sound.setAttribute('aria-pressed',String(soundOn));if(soundOn)tone()};
 function updateProgress(){const progress=Math.max(0,Math.min(1,1-gap/START_GAP));dots.forEach((d,i)=>d.classList.toggle('on',state==='won'||i<Math.floor(progress*6)));document.querySelector('#progress').setAttribute('aria-label',state==='won'?'お友だちに追いつきました':`お友だちへの近づき度 ${Math.round(progress*100)}パーセント`)}
-function reset(){chooseAnimals();replayVisibility(false);speciesText.textContent=animal.name+' → '+partner.name;canvas.setAttribute('aria-label',animal.name+'が'+partner.name+'を追いかけます');state='ready';gap=START_GAP;runDistance=0;target=0;position=0;bounce=0;last=performance.now();label.textContent='あそぶ！';statusText.textContent='いっしょに あそぼ！';hint.innerHTML='ぽんぽん おして おいかけよう！<br>おともだちは にげるよ。';restart.hidden=true;updateProgress();draw(0)}
+function reset(){chooseAnimals();replayVisibility(false);speciesText.textContent=animal.name+' → '+partner.name;canvas.setAttribute('aria-label',animal.name+'が'+partner.name+'を追いかけます');state='ready';gap=START_GAP;runDistance=0;target=0;position=0;bounce=0;last=performance.now();label.textContent='あそぶ！';statusText.textContent='いっしょに あそぼ！';hint.innerHTML='がめんを タッチして おいかけよう！<br>おともだちは にげるよ。';restart.hidden=true;updateProgress();draw(0)}
 function start(){reset();state='playing';label.textContent='ぽん！';statusText.textContent='ぽんぽん！ おいかけよう！';restart.hidden=false;tone()}
 restart.onclick=reset;replay.onclick=()=>{start();go.focus()};
-go.onclick=()=>{if(state==='won')return;if(state==='ready'){start();return}gap=Math.max(0,gap-TAP_DISTANCE);target=1-gap/START_GAP;bounce=1;tone(gap===0);if(gap===0){state='won';replayVisibility(true);label.textContent='タッチ！';statusText.textContent='タッチ！ なかよし！';hint.innerHTML='やったね！ おともだちに あえたね。<br>もう いっかい あそぼう！'}else{statusText.textContent=gap<150?'もうすこし！ ぽんぽん！':'にげるよ！ ぽんぽん！'}updateProgress()};
+function chaseTap(){if(state==='won')return;if(state==='ready'){start();return}gap=Math.max(0,gap-TAP_DISTANCE);target=1-gap/START_GAP;bounce=1;tone(gap===0);if(gap===0){state='won';replayVisibility(true);label.textContent='タッチ！';statusText.textContent='タッチ！ なかよし！';hint.innerHTML='やったね！ おともだちに あえたね。<br>もう いっかい あそぼう！'}else{statusText.textContent=gap<150?'もうすこし！ ぽんぽん！':'にげるよ！ ぽんぽん！'}updateProgress()};
+go.onclick=chaseTap;
+const chaseWorld=document.querySelector('.world');chaseWorld.style.touchAction='manipulation';chaseWorld.style.cursor='pointer';canvas.tabIndex=0;canvas.setAttribute('aria-label','恐竜の画面をタッチして追いかけよう。Enterまたはスペースでも進めます。');
+chaseWorld.addEventListener('pointerdown',e=>{if(e.button!==0||state==='won')return;e.preventDefault();chaseTap()});
+canvas.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();chaseTap()}});
 function ellipse(x,y,rx,ry,c){ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(x,y,rx,ry,0,0,Math.PI*2);ctx.fill()}
 function path(points,c){ctx.fillStyle=c;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fill()}
 function cloud(x,y,s){ellipse(x,y,36*s,13*s,'#fffdf2');ellipse(x-12*s,y-8*s,19*s,15*s,'#fffdf2');ellipse(x+11*s,y-13*s,20*s,19*s,'#fffdf2')}

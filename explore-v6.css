@@ -40,8 +40,8 @@ h1 { margin: 18px 0 8px; font-size: clamp(26px, 5vw, 42px); }
   position: absolute; right: 4px; top: 4px; display: grid; place-items: center;
   width: 24px; height: 24px; border-radius: 50%; background: #fffdf5; font-weight: bold;
 }
-.feedback { min-height: 1.6em; font-weight: bold; margin: 12px 0 5px; }
-.progress { display: flex; justify-content: center; gap: 8px; }
+.feedback { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.progress { margin-top: 12px; display: flex; justify-content: center; gap: 8px; }
 .progress span { width: 14px; height: 14px; background: #dddccd; border-radius: 50%; }
 .progress .done { background: #628852; }
 #stage[data-game="tracks"] { background: #ecdfc6; }
@@ -63,7 +63,6 @@ h1 { margin: 18px 0 8px; font-size: clamp(26px, 5vw, 42px); }
   .hint { margin-bottom: 6px; font-size: 14px; }
   #stage { grid-template-columns: minmax(0, 1fr) 3fr; align-items: center; padding: 7px; }
   .choice { max-height: 115px; }
-  .feedback { margin: 6px 0 3px; }
 }
 @media (max-width: 450px) {
   [data-game="tracks"] #choices { grid-template-columns: repeat(3, minmax(0,1fr)); }

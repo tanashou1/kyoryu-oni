@@ -1,9 +1,9 @@
 'use strict';
 
 const modes = {
-  find: { title: 'きょうりゅう どこかな？', hint: 'おなじ きょうりゅうを さがしてね！', goal: 3 },
-  tracks: { title: 'あしあと ぺたぺた', hint: 'ひかる あしあとを ぽん！', goal: 5 },
-  shadow: { title: 'きょうりゅう かげあわせ', hint: 'かげと おなじ きょうりゅうは どれかな？', goal: 3 }
+  find: { title: 'きょうりゅう どこかな？', hint: 'おなじ えは どれ？', goal: 3 },
+  tracks: { title: 'あしあと ぺたぺた', hint: 'ひかる あしあとを ぽん', goal: 5 },
+  shadow: { title: 'きょうりゅう かげあわせ', hint: 'この かげは どれ？', goal: 3 }
 };
 const mode = new URLSearchParams(location.search).get('game');
 const game = Object.hasOwn(modes, mode) ? mode : 'find';
@@ -95,7 +95,7 @@ function finishStep(button, next) {
 }
 
 function tryAgain(button) {
-  feedback.textContent = game === 'tracks' ? 'ひかる あしあとを ぽん！' : 'もういちど さがそう！';
+  feedback.textContent = game === 'tracks' ? 'ひかる あしあとを ぽん' : 'もういちど さがそう！';
   button.classList.add('try-again');
   stamp(button, '↻');
 }
@@ -113,9 +113,6 @@ function showChoices() {
     : Dinos.species;
   const animal = shuffle(pool.filter(item => item !== previous))[0];
   previous = animal;
-  const label = document.createElement('span');
-  label.textContent = game === 'shadow' ? 'この かげは だれ？' : 'さがす きょうりゅう';
-  clue.append(label);
   clue.setAttribute('aria-label', game === 'shadow' ? 'さがす きょうりゅうの かげ' : animal.name);
   picture(clue, animal, game === 'shadow');
 
@@ -143,9 +140,7 @@ function showTracks() {
   clue.hidden = false;
   const animal = Dinos.pick(previous);
   previous = animal;
-  const label = document.createElement('span');
-  label.textContent = animal.name + 'に あいに いこう！';
-  clue.append(label);
+  clue.setAttribute('aria-label', animal.name);
   picture(clue, animal);
   const tracks = [];
   function highlight() {

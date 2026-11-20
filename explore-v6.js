@@ -1,12 +1,12 @@
 'use strict';
 
 const modes = {
-  find: { title: 'きょうりゅう どこかな？', hint: 'おなじ えは どれ？', goal: 3 },
   tracks: { title: 'あしあと ぺたぺた', hint: 'ひかる あしあとを ぽん', goal: 5 },
   shadow: { title: 'きょうりゅう かげあわせ', hint: 'この かげは どれ？', goal: 3 }
 };
 const mode = new URLSearchParams(location.search).get('game');
-const game = Object.hasOwn(modes, mode) ? mode : 'find';
+if (!Object.hasOwn(modes, mode)) location.replace('find.html?v=8');
+const game = mode === 'tracks' ? 'tracks' : 'shadow';
 const { title, hint, goal } = modes[game];
 const stage = document.querySelector('#stage');
 const clue = document.querySelector('#clue');
@@ -108,13 +108,11 @@ function showChoices() {
   clue.hidden = false;
 
   // Keep shadow choices visually distinct, even on a small screen.
-  const pool = game === 'shadow'
-    ? Dinos.species.filter(animal => ['tyranno', 'spino', 'stego', 'mosa', 'trike', 'ptera', 'argentine'].includes(animal.id))
-    : Dinos.species;
+  const pool = Dinos.species.filter(animal => ['tyranno', 'spino', 'stego', 'mosa', 'trike', 'ptera', 'argentine'].includes(animal.id));
   const animal = shuffle(pool.filter(item => item !== previous))[0];
   previous = animal;
-  clue.setAttribute('aria-label', game === 'shadow' ? 'さがす きょうりゅうの かげ' : animal.name);
-  picture(clue, animal, game === 'shadow');
+  clue.setAttribute('aria-label', 'さがす きょうりゅうの かげ');
+  picture(clue, animal, true);
 
   const options = shuffle([animal, ...shuffle(pool.filter(item => item !== animal)).slice(0, 2)]);
   for (const option of options) {

@@ -1,0 +1,80 @@
+.find-page .app { max-width: 990px; }
+#field {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 1.65;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 5px solid #fffdf6;
+  border-radius: 24px;
+  background: #9db482;
+  box-shadow: 0 5px 0 #e8e9d8;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+#jurassic, #spots { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hide-spot {
+  position: absolute;
+  appearance: none;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 20px;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.hide-spot:focus-visible {
+  z-index: 3 !important;
+  outline: 3px solid #fff5cb;
+  box-shadow: 0 0 0 5px #425a44;
+}
+#ripple, #peek {
+  position: absolute;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+#ripple {
+  width: 38px;
+  height: 38px;
+  border: 3px solid #fff2bf;
+  box-shadow: 0 0 0 2px #58715244;
+  animation: forest-tap .45s ease-out both;
+}
+#ripple.correct {
+  width: 60px;
+  height: 60px;
+  border-width: 5px;
+  animation-duration: .65s;
+}
+#peek {
+  width: 32px;
+  height: 32px;
+  border: 3px dashed #fff6cd;
+  box-shadow: 0 0 4px 1px #3143339e;
+  animation: forest-peek 1.4s ease-in-out infinite;
+}
+@keyframes forest-tap {
+  from { transform: translate(-50%, -50%) scale(.6); opacity: 1; }
+  to { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
+}
+@keyframes forest-peek {
+  0%, 100% { opacity: .65; }
+  45% { opacity: 1; }
+}
+@media (orientation: portrait) and (max-width: 600px) {
+  #field { aspect-ratio: .91; }
+}
+@media (orientation: landscape) and (max-height: 540px) {
+  #field { width: min(100%, max(300px, calc((100svh - 120px) * 1.65))); }
+  .find-page h1 { margin-block: 3px; }
+  .find-page .hint { margin-bottom: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #ripple, #peek { animation: none; }
+}
